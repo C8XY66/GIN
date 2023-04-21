@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm,algorithmic}
+
+\begin{document}
+
+\subsection*{Pseudocode for Model Assessment and Model Selection}
+
+\begin{algorithm}[h]
+    \caption{Model Assessment (k-fold CV)}
+    \begin{algorithmic}[1]
+        \REQUIRE Dataset $D$, set of configurations $\Theta$, number of repetitions $R$
+        \FOR{$r \leftarrow 1$ to $R$}
+            \STATE Shuffle $D$
+            \STATE Split $D$ into $k$ folds $F_1, \ldots, F_k$
+            \FOR{$i \leftarrow 1$ to $k$}
+                \STATE $train_k, test_k \leftarrow (\bigcup\limits_{j \neq i} F_j), F_i$
+                \STATE $best_{model} \leftarrow \operatorname{Select}(train_k, \Theta)$
+                \STATE $perf_k \leftarrow \operatorname{Eval}(best_{model}, test_k)$
+            \ENDFOR
+            \STATE $perf_r \leftarrow \sum_{i=1}^k perf_i/k$
+        \ENDFOR
+        \STATE $perf \leftarrow \sum_{r=1}^R perf_r/R$
+        \RETURN $perf$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+    \caption{Model Selection}
+    \begin{algorithmic}[1]
+        \REQUIRE $train_k$, $\Theta$
+        \STATE $valid \leftarrow^R$ $10\% * train_k$
+        \STATE $train \leftarrow$ $train_k \setminus valid$
+        \STATE $best_{model} \leftarrow \text{None}$
+        \STATE $best_{perf} \leftarrow -\infty$
+        \FORALL{$\theta \in \Theta$}
+            \STATE $model \leftarrow \operatorname{Train}(train, \theta)$
+            \STATE $perf \leftarrow \operatorname{Eval}(model, valid)$
+            \IF{$perf > best_{perf}$}
+                \STATE $best_{perf} \leftarrow perf$
+                \STATE $best_{model} \leftarrow model$
+            \ENDIF
+        \ENDFOR
+        \RETURN $best_{model}$
+    \end{algorithmic}
+\end{algorithm}
+
+In Algorithm 1, "Select" refers to Algorithm 2.
+"Train" and "Eval" represent training and testing phases respectively.
+After each model selection, the best model is used to evaluate the external test fold. Performances are averaged across the k folds and R repetitions of the cross validation.
+
+
+\end{document}
