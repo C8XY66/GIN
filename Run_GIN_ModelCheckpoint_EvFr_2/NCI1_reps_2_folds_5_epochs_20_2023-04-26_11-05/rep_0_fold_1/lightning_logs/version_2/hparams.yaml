@@ -1,0 +1,7 @@
+batch_size: 128
+dropout: 0.5
+epochs: 20
+hidden_channels: 16
+in_channels: 37
+num_layers: 5
+out_channels: 2
